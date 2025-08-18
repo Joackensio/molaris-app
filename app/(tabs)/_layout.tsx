@@ -2,18 +2,23 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { UserPlus, Search, Chrome as Home } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+  const extraBottom = Math.max(insets.bottom, 8);
+
   return (
     <Tabs
       screenOptions={{
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [styles.tabBar, { paddingBottom: extraBottom, height: 60 + extraBottom }],
         tabBarActiveTintColor: '#FF4081',
         tabBarInactiveTintColor: '#666',
         tabBarLabelStyle: styles.tabBarLabel,
         headerStyle: styles.header,
         headerTitleStyle: styles.headerTitle,
         headerTintColor: '#FFF',
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tabs.Screen

@@ -47,7 +47,7 @@ export default function HomeScreen() {
           style={[styles.card, styles.cardAdd]} 
           onPress={() => router.push('/(tabs)/add')}
         >
-          <UserPlus size={36} color="#FFF" />
+          <UserPlus size={36} color="#333" />
           <Text style={styles.cardText}>Agregar nuevo paciente</Text>
         </TouchableOpacity>
         
@@ -55,7 +55,7 @@ export default function HomeScreen() {
           style={[styles.card, styles.cardSearch]} 
           onPress={() => router.push('/(tabs)/search')}
         >
-          <Search size={36} color="#FFF" />
+          <Search size={36} color="#333" />
           <Text style={styles.cardText}>Buscar paciente</Text>
         </TouchableOpacity>
         
@@ -63,7 +63,7 @@ export default function HomeScreen() {
           style={[styles.card, styles.cardAppointment]} 
           onPress={() => router.push('/appointment/add')}
         >
-          <Calendar size={36} color="#FFF" />
+          <Calendar size={36} color="#333" />
           <Text style={styles.cardText}>Agregar Turno</Text>
         </TouchableOpacity>
       </View>
@@ -164,7 +164,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FF4081',
+    backgroundColor: '#FFFFFF',
     padding: 16,
   },
   cardsContainer: {
@@ -184,18 +184,18 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   cardAdd: {
-    backgroundColor: '#80CBC4',
+    backgroundColor: '#F8BBD0',
   },
   cardSearch: {
-    backgroundColor: '#4DB6AC',
+    backgroundColor: '#F8BBD0',
   },
   cardAppointment: {
-    backgroundColor: '#26A69A',
+    backgroundColor: '#F8BBD0',
   },
   cardText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: '#333',
   },
   statsContainer: {
     marginTop: 30,
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   statsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: '#333',
     marginBottom: 12,
   },
   statsCard: {
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   },
   appointmentsContainer: {
     marginTop: 24,
-    backgroundColor: '#FFF',
+    backgroundColor: '#FFF9C4',
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',

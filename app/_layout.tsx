@@ -8,13 +8,37 @@ import { getPatients, savePatient, deletePatient as removePatient } from '@/serv
 import { getAppointments, saveAppointment, deleteAppointment as removeAppointment, getAppointmentsForDate } from '@/services/appointmentService';
 import { Patient } from '@/types/patient';
 import { Appointment } from '@/types/appointment';
+import * as NavigationBar from 'expo-navigation-bar';
+import { Platform } from 'react-native';
 
 export default function RootLayout() {
   useFrameworkReady();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(__DEV__);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      const applyHidden = async () => {
+        try {
+          await NavigationBar.setVisibilityAsync('hidden');
+        } catch {}
+      };
+
+      applyHidden();
+
+      const sub = NavigationBar.addVisibilityListener(({ visibility }) => {
+        if (visibility !== 'hidden') {
+          NavigationBar.setVisibilityAsync('hidden');
+        }
+      });
+
+      return () => {
+        sub.remove();
+      };
+    }
+  }, []);
 
   const refreshAppointments = async () => {
     try {
