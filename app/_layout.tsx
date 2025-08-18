@@ -1,0 +1,115 @@
+import { useEffect, useState } from 'react';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useFrameworkReady } from '@/hooks/useFrameworkReady';
+import AuthContext from '@/context/AuthContext';
+import AppContext from '@/context/AppContext';
+import { getPatients, savePatient, deletePatient as removePatient } from '@/services/patientService';
+import { getAppointments, saveAppointment, deleteAppointment as removeAppointment, getAppointmentsForDate } from '@/services/appointmentService';
+import { Patient } from '@/types/patient';
+import { Appointment } from '@/types/appointment';
+
+export default function RootLayout() {
+  useFrameworkReady();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
+
+  const refreshAppointments = async () => {
+    try {
+      const allAppointments = await getAppointments();
+      setAppointments(allAppointments);
+      
+      // Calculate today's appointments
+      const today = new Date();
+      const todayAppointmentsList = await getAppointmentsForDate(today);
+      setTodayAppointments(todayAppointmentsList);
+    } catch (error) {
+      console.error('Error refreshing appointments:', error);
+    }
+  };
+
+  const refreshPatients = async () => {
+    try {
+      const allPatients = await getPatients();
+      setPatients(allPatients);
+    } catch (error) {
+      console.error('Error refreshing patients:', error);
+    }
+  };
+
+  const addPatient = async (patient: Patient) => {
+    try {
+      await savePatient(patient);
+      await refreshPatients();
+    } catch (error) {
+      console.error('Error adding patient:', error);
+      throw error;
+    }
+  };
+
+  const addAppointment = async (appointment: Appointment) => {
+    try {
+      await saveAppointment(appointment);
+      await refreshAppointments();
+    } catch (error) {
+      console.error('Error adding appointment:', error);
+      throw error;
+    }
+  };
+
+  const deleteAppointmentHandler = async (id: string) => {
+    try {
+      await removeAppointment(id);
+      await refreshAppointments();
+    } catch (error) {
+      console.error('Error deleting appointment:', error);
+      throw error;
+    }
+  };
+
+  const deletePatient = async (id: string) => {
+    try {
+      await removePatient(id);
+      await refreshPatients();
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    refreshPatients();
+    refreshAppointments();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+      <AppContext.Provider value={{
+        patients,
+        appointments,
+        todayAppointments,
+        todayAppointmentsCount: todayAppointments.length,
+        refreshPatients,
+        refreshAppointments,
+        addPatient,
+        deletePatient,
+        addAppointment,
+        deleteAppointment: deleteAppointmentHandler
+      }}>
+        <>
+          <Stack screenOptions={{ headerShown: false }}>
+            {!isAuthenticated ? (
+              <Stack.Screen name="login" options={{ gestureEnabled: false }} />
+            ) : (
+              <Stack.Screen name="(tabs)" options={{ gestureEnabled: false }} />
+            )}
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </>
+      </AppContext.Provider>
+    </AuthContext.Provider>
+  );
+}
