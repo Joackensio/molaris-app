@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import 'expo-standard-web-crypto';
+import React, { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
@@ -10,10 +11,15 @@ import { Patient } from '@/types/patient';
 import { Appointment } from '@/types/appointment';
 import * as NavigationBar from 'expo-navigation-bar';
 import { Platform } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+
+// Evita que el splash se oculte automáticamente
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   useFrameworkReady();
-  const [isAuthenticated, setIsAuthenticated] = useState(__DEV__);
+  const defaultAuth = false;
+  const [isAuthenticated, setIsAuthenticated] = useState(defaultAuth);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
@@ -69,27 +75,6 @@ export default function RootLayout() {
       await refreshPatients();
     } catch (error) {
       console.error('Error adding patient:', error);
-      throw error;
-    }
-  };
-
-  const addAppointment = async (appointment: Appointment) => {
-    try {
-      await saveAppointment(appointment);
-      await refreshAppointments();
-    } catch (error) {
-      console.error('Error adding appointment:', error);
-      throw error;
-    }
-  };
-
-  const deleteAppointmentHandler = async (id: string) => {
-    try {
-      await removeAppointment(id);
-      await refreshAppointments();
-    } catch (error) {
-      console.error('Error deleting appointment:', error);
-      throw error;
     }
   };
 
@@ -99,13 +84,40 @@ export default function RootLayout() {
       await refreshPatients();
     } catch (error) {
       console.error('Error deleting patient:', error);
-      throw error;
+    }
+  };
+
+  const addAppointment = async (appointment: Appointment) => {
+    try {
+      await saveAppointment(appointment);
+      await refreshAppointments();
+    } catch (error) {
+      console.error('Error adding appointment:', error);
+    }
+  };
+
+  const deleteAppointmentHandler = async (id: string) => {
+    try {
+      await removeAppointment(id);
+      await refreshAppointments();
+    } catch (error) {
+      console.error('Error deleting appointment:', error);
     }
   };
 
   useEffect(() => {
-    refreshPatients();
-    refreshAppointments();
+    const boot = async () => {
+      try {
+        await Promise.all([refreshPatients(), refreshAppointments()]);
+      } finally {
+        // Simula una transición corta como WhatsApp
+        setTimeout(() => {
+          SplashScreen.hideAsync().catch(() => {});
+        }, 500);
+      }
+    };
+
+    boot();
   }, []);
 
   return (
