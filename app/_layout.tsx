@@ -1,4 +1,4 @@
-import 'expo-standard-web-crypto';
+// import 'expo-standard-web-crypto';
 import React, { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';

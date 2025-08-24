@@ -1,0 +1,61 @@
+import { ExpoConfig, ConfigContext } from 'expo/config';
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
+  name: 'Molaris App',
+  slug: 'molaris-app',
+  version: '1.0.0',
+  orientation: 'portrait',
+  icon: './assets/images/icon.png',
+  scheme: 'molaris-app',
+  userInterfaceStyle: 'automatic',
+  newArchEnabled: true,
+  splash: {
+    image: './assets/images/icon.png',
+    resizeMode: 'contain',
+    backgroundColor: '#000000'
+  },
+  ios: {
+    supportsTablet: true,
+    bundleIdentifier: 'com.molaris.app',
+    buildNumber: '1',
+    infoPlist: {
+      CFBundleDisplayName: 'Molaris App',
+      CFBundleName: 'Molaris App',
+      NSCameraUsageDescription: 'Esta aplicación necesita acceso a la cámara para tomar fotos de pacientes',
+      NSPhotoLibraryUsageDescription: 'Esta aplicación necesita acceso a la galería para seleccionar fotos de pacientes',
+      UIBackgroundModes: ['fetch', 'remote-notification']
+    }
+  },
+  android: {
+    package: 'com.molaris.app',
+    versionCode: 1,
+    adaptiveIcon: {
+      foregroundImage: './assets/images/icon.png',
+      backgroundColor: '#000000'
+    }
+  },
+  web: {
+    bundler: 'metro',
+    output: 'single',
+    favicon: './assets/images/favicon.png'
+  },
+  plugins: [
+    'expo-router',
+    [
+      'expo-camera',
+      {
+        cameraPermission: 'Permitir que Molaris App acceda a tu cámara para tomar fotos de pacientes.'
+      }
+    ],
+    [
+      'expo-image-picker',
+      {
+        photosPermission: 'Permitir que Molaris App acceda a tu galería para seleccionar fotos de pacientes.'
+      }
+    ]
+  ],
+  experiments: {
+    typedRoutes: true
+  }
+});
